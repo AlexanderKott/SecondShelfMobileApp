@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SecondShelf</string>
+        <string name="tab_feed">Лента</string>
+        <string name="tab_i_give">Я дарю</string>
+        <string name="tab_they_give">Мне дарят</string>
+        <string name="tab_profile">Кабинет</string>
+</resources>
