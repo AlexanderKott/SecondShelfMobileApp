@@ -11,8 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kotikov.secondshelf.ui.screens.AddThingScreen
 import com.kotikov.secondshelf.ui.screens.ApplicationFormScreen
-import com.kotikov.secondshelf.ui.screens.EditItemScreen
+import com.kotikov.secondshelf.ui.screens.EditThingScreen
 import com.kotikov.secondshelf.ui.screens.FeedScreen
 import com.kotikov.secondshelf.ui.screens.IGiveScreen
 import com.kotikov.secondshelf.ui.screens.ItemCandidatesScreen
@@ -72,8 +73,9 @@ fun AppNavigationGraph(
                 bottomBar = bottomBar,
                 onEditClick = { id -> navController.navigate(AppScreens.EditThing(id)) },
                 onCandidatesClick = { id -> navController.navigate(AppScreens.ItemCandidates(id)) },
-                onThingClick = { id -> navController.navigate(AppScreens.ThingDetail(id)) }
-                )
+                onThingClick = { id -> navController.navigate(AppScreens.ThingDetail(id)) },
+                onAddClick = { navController.navigate(AppScreens.AddThing) }
+            )
         }
 
         composable<AppScreens.TheyGive> {
@@ -95,7 +97,7 @@ fun AppNavigationGraph(
 
         composable<AppScreens.EditThing> { navBackStackEntry ->
             val route: AppScreens.EditThing = navBackStackEntry.toRoute()
-            EditItemScreen(
+            EditThingScreen(
                 itemId = route.itemId,
                 onBackClick = { navController.popBackStack() }
             )
@@ -118,6 +120,17 @@ fun AppNavigationGraph(
                 onSubmitClick = { application ->
                     println("Заявка отправлена: ${application.thingId}, текст: ${application.applicationText}")
                     navController.popBackStack<AppScreens.Feed>(inclusive = false)
+                }
+            )
+        }
+
+
+        composable<AppScreens.AddThing> {
+            AddThingScreen(
+                onBackClick = { navController.popBackStack() },
+                onThingCreated = {
+                    println("Вещь успешно создана")
+                    navController.popBackStack()
                 }
             )
         }

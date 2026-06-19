@@ -1,5 +1,6 @@
 package com.kotikov.secondshelf.ui.screens
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,21 +34,25 @@ import com.kotikov.secondshelf.ui.screens.models.EditThingFormState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditThingScreen(
-    itemId: String,
+fun AddThingScreen(
     onBackClick: () -> Unit,
+    onThingCreated: () -> Unit,
 ) {
-    var title by remember { mutableStateOf("initialState.title") }
-    var imageUrls by remember { mutableStateOf("initialState.imageUrls") }
-    var selectedCity by remember { mutableStateOf("initialState.city") }
-    var selectedCategory by remember { mutableStateOf("initialState.category") }
-    var description by remember { mutableStateOf("initialState.description") }
+    var title by remember { mutableStateOf("") }
+    var selectedCity by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
     var showCityDialog by remember { mutableStateOf(false) }
     var showCategoryDialog by remember { mutableStateOf(false) }
 
+    val isFormValid = title.isNotBlank() &&
+            selectedCity.isNotBlank() &&
+            selectedCategory.isNotBlank() &&
+            description.isNotBlank()
+
     Scaffold(
-        topBar = { TopGradientBar(text = "Редактировать вещь", onBackClick = onBackClick) },
+        topBar = { TopGradientBar(text = "Добавить вещь", onBackClick = onBackClick) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -61,7 +66,7 @@ fun EditThingScreen(
             ThingTitleField(
                 value = title,
                 onValueChange = { title = it },
-                initiallyEditable = false
+                initiallyEditable = true
             )
 
             ThingPhotosSection(
@@ -70,39 +75,41 @@ fun EditThingScreen(
             )
 
             ThingCitySelector(
-                cityName = selectedCity,
+                cityName = if (selectedCity.isBlank()) "Не выбран" else selectedCity,
                 onClick = { showCityDialog = true }
             )
 
             ThingCategorySelector(
-                categoryName = selectedCategory,
+                categoryName = if (selectedCategory.isBlank()) "Не выбрана" else selectedCategory,
                 onClick = { showCategoryDialog = true }
             )
 
             ThingDescriptionField(
                 value = description,
                 onValueChange = { description = it },
-                initiallyEditable = false
+                initiallyEditable = true
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = {
-                    val updatedData = EditThingFormState(
-                        id = "initialState.id",
+                    val newThing = EditThingFormState(
+                        id = "", // ID сгенерирует бэкенд
                         title = title,
                         imageUrls = emptyList(),
                         city = selectedCity,
                         category = selectedCategory,
                         description = description
                     )
-                    println("Сохранение изменений: $updatedData")
+                    println("Создание новой вещи: $newThing")
+                    onThingCreated()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                enabled = isFormValid
             ) {
-                Text("Сохранить изменения", style = MaterialTheme.typography.bodyLarge)
+                Text("Создать вещь", style = MaterialTheme.typography.bodyLarge)
             }
         }
     }

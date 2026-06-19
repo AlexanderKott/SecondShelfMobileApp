@@ -37,6 +37,8 @@ sealed interface AppScreens {
     @Serializable
     data class ThingDetail(val itemId: String) : AppScreens
 
+    @Serializable
+    object AddThing : AppScreens
 }
 
 

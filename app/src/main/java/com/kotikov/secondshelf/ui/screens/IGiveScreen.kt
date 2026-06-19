@@ -35,7 +35,8 @@ fun IGiveScreen(
     bottomBar: SharedBottomBar,
     onEditClick: (String) -> Unit,
     onCandidatesClick: (String) -> Unit,
-    onThingClick: (String) -> Unit
+    onThingClick: (String) -> Unit,
+    onAddClick: () -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -59,9 +60,7 @@ fun IGiveScreen(
         bottomBar = bottomBar,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    println("Нажата кнопка добавления новой вещи")
-                },
+                onClick= onAddClick,
                 containerColor = Color(0xFFF44336)
             ) {
                 Icon(
