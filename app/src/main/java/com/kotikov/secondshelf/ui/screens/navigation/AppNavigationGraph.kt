@@ -75,7 +75,12 @@ fun AppNavigationGraph(
             )
         }
 
-        composable<AppScreens.TheyGive> { TheyGiveScreen(bottomBar) }
+        composable<AppScreens.TheyGive> {
+            TheyGiveScreen(
+                bottomBar = bottomBar,
+                onThingClick = { id -> navController.navigate(AppScreens.ThingDetail(id)) }
+            )
+        }
 
         composable<AppScreens.Profile> { ProfileScreen(bottomBar) }
 

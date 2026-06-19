@@ -40,7 +40,6 @@ import com.kotikov.secondshelf.ui.screens.navigation.SharedBottomBar
 import com.kotikov.secondshelf.ui.screens.components.TopGradientBar
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -49,6 +48,7 @@ fun ProfileScreen(
 ) {
     var nameAndSurname by remember { mutableStateOf("Иван Иванов") }
     var selectedCity by remember { mutableStateOf("Москва") }
+    var aboutMe by remember { mutableStateOf("Люблю книги, активный отдых и помогаю людям. Живу в центре Москвы.") }
     var contactsInfo by remember { mutableStateOf("Telegram: @ivan_dev\nТелефон: +7 (999) 123-45-67") }
 
     var showCityDialog by remember { mutableStateOf(false) }
@@ -78,6 +78,11 @@ fun ProfileScreen(
                 onClick = { showCityDialog = true }
             )
 
+            ProfileAboutInput(
+                value = aboutMe,
+                onValueChange = { aboutMe = it }
+            )
+
             ProfileContactsInput(
                 value = contactsInfo,
                 onValueChange = { contactsInfo = it }
@@ -97,7 +102,7 @@ fun ProfileScreen(
     }
 
     if (showCityDialog) {
-        SelectionDialog (
+        SelectionDialog(
             title = "Выберите город",
             options = listOf("Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург"),
             onOptionSelected = {
@@ -139,8 +144,6 @@ private fun ProfileNameInput(
             IconButton(
                 onClick = {
                     if (isEditable) {
-                        // ЗДЕСЬ СРАБАТЫВАЕТ СОХРАНЕНИЕ
-                        // Данные из переменной 'value' можно отправить на сервер или в БД
                         println("Имя сохранено: $value")
                     }
                     isEditable = !isEditable
@@ -199,6 +202,41 @@ private fun ProfileCitySelector(
 }
 
 
+@Composable
+private fun ProfileAboutInput(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isEditable by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier.fillMaxWidth(),
+        label = { Text("О себе") },
+        minLines = 3,
+        readOnly = !isEditable,
+        shape = MaterialTheme.shapes.small,
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    if (isEditable) {
+                        println("О себе сохранено: $value")
+                    }
+                    isEditable = !isEditable
+                }
+            ) {
+                Icon(
+                    imageVector = if (isEditable) Icons.Default.Check else Icons.Default.Edit,
+                    contentDescription = if (isEditable) "Сохранить" else "Редактировать",
+                    tint = if (isEditable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    )
+}
+
 
 @Composable
 private fun ProfileContactsInput(
@@ -221,7 +259,6 @@ private fun ProfileContactsInput(
             IconButton(
                 onClick = {
                     if (isEditable) {
-                        // ЗДЕСЬ СРАБАТЫВАЕТ СОХРАНЕНИЕ КОНТАКТОВ
                         println("Контакты сохранены: $value")
                     }
                     isEditable = !isEditable
@@ -262,4 +299,3 @@ private fun DeleteAccountDialog(
         }
     )
 }
-
