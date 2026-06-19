@@ -34,10 +34,11 @@ import kotlinx.coroutines.launch
 fun IGiveScreen(
     bottomBar: SharedBottomBar,
     onEditClick: (String) -> Unit,
-    onCandidatesClick: (String) -> Unit
+    onCandidatesClick: (String) -> Unit,
+    onThingClick: (String) -> Unit
 ) {
 
-    val coroutineScope = rememberCoroutineScope ()
+    val coroutineScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
 
     val myGifts = remember {
@@ -57,7 +58,7 @@ fun IGiveScreen(
         topBar = { TopGradientBar(text = "Вещи от меня") },
         bottomBar = bottomBar,
         floatingActionButton = {
-            FloatingActionButton (
+            FloatingActionButton(
                 onClick = {
                     println("Нажата кнопка добавления новой вещи")
                 },
@@ -71,7 +72,7 @@ fun IGiveScreen(
         }
     ) { padding ->
 
-        PullToRefreshBox (
+        PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = {
                 coroutineScope.launch {
@@ -85,24 +86,24 @@ fun IGiveScreen(
                 .padding(padding)
         ) {
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(items = myGifts, key = { it.id }) { thing ->
-                IGiveThingCard(
-                    feedThing = thing,
-                    candidatesCount = (thing.id.hashCode() % 5 + 1),
-                    onEditClick = onEditClick,
-                    onCandidatesClick = onCandidatesClick,
-                    onDeleteClick = { id ->
-                        println("Триггер удаления вещи с ID: $id")
-                    }
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items = myGifts, key = { it.id }) { thing ->
+                    IGiveThingCard(
+                        feedThing = thing,
+                        candidatesCount = (thing.id.hashCode() % 5 + 1),
+                        onThingClick = onThingClick,
+                        onEditClick = onEditClick,
+                        onCandidatesClick = onCandidatesClick,
+                        onDeleteClick = { id ->
+                            println("Триггер удаления вещи с ID: $id")
+                        }
+                    )
+                }
             }
         }
-    }
     }
 }

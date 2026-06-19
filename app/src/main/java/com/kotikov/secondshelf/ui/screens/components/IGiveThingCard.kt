@@ -2,6 +2,7 @@ package com.kotikov.secondshelf.ui.screens.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -57,6 +58,7 @@ private fun ThingImage(
 @Composable
 private fun ThingHeaderRow(
     title: String,
+    onThingClick: () -> Unit,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,7 +71,10 @@ private fun ThingHeaderRow(
             style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onThingClick() }
         )
         IconButton(
             onClick = onEditClick,
@@ -83,6 +88,44 @@ private fun ThingHeaderRow(
         }
     }
 }
+
+
+@Composable
+private fun ThingImage(
+    imageUrl: String?,
+    onThingClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SubcomposeAsyncImage(
+        model = imageUrl,
+        contentDescription = "Фото вещи",
+        modifier = modifier
+            .size(80.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .clickable { onThingClick() },
+        contentScale = ContentScale.Crop,
+        loading = {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                )
+            }
+        },
+        error = {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Outlined.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
+                )
+            }
+        }
+    )
+}
+
 
 @Composable
 private fun ThingActionButtons(
@@ -120,11 +163,12 @@ private fun ThingActionButtons(
     }
 }
 
-// --- МИКРО-КОМПОНЕНТ 4: САМА КАРТОЧКА ВЕЩИ С СЕТКОЙ ОТСТУПОВ ---
+
 @Composable
 fun IGiveThingCard(
     feedThing: FeedThing,
     candidatesCount: Int,
+    onThingClick: (String) -> Unit,
     onEditClick: (String) -> Unit,
     onCandidatesClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
@@ -146,10 +190,14 @@ fun IGiveThingCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ThingImage(imageUrl = feedThing.imageUrl)
+                ThingImage(
+                    imageUrl = feedThing.imageUrl,
+                    onThingClick = { onThingClick(feedThing.id) }
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 ThingHeaderRow(
                     title = feedThing.title,
+                    onThingClick = { onThingClick(feedThing.id) },
                     onEditClick = { onEditClick(feedThing.id) }
                 )
             }

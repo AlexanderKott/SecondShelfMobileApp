@@ -72,7 +72,8 @@ fun AppNavigationGraph(
                 bottomBar = bottomBar,
                 onEditClick = { id -> navController.navigate(AppScreens.EditThing(id)) },
                 onCandidatesClick = { id -> navController.navigate(AppScreens.ItemCandidates(id)) },
-            )
+                onThingClick = { id -> navController.navigate(AppScreens.ThingDetail(id)) }
+                )
         }
 
         composable<AppScreens.TheyGive> {
