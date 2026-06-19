@@ -30,7 +30,8 @@ import kotlinx.coroutines.launch
 fun FeedScreen(
     modifier: Modifier = Modifier,
     bottomBar: SharedBottomBar,
-    feedListState : LazyListState
+    feedListState : LazyListState,
+    onThingClick: (String) -> Unit
 ) {
 
     val onSearchClick : (String) -> Unit = {}
@@ -88,7 +89,7 @@ fun FeedScreen(
             ThingsList(
                 state = feedListState,
                 feedThings = mockFeedThings,
-                onThingClick = {}
+                onThingClick = onThingClick
             )
         }
         }

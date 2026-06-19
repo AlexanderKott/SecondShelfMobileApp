@@ -29,6 +29,14 @@ sealed interface AppScreens {
 
     @Serializable
     data class EditThing(val itemId: String) : AppScreens
+
+    @Serializable
+    data class ApplicationForm(val thingId: String) : AppScreens
+
+
+    @Serializable
+    data class ThingDetail(val itemId: String) : AppScreens
+
 }
 
 

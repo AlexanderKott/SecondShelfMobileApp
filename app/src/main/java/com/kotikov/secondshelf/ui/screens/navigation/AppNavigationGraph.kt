@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.kotikov.secondshelf.ui.screens.ApplicationFormScreen
 import com.kotikov.secondshelf.ui.screens.EditItemScreen
 import com.kotikov.secondshelf.ui.screens.FeedScreen
 import com.kotikov.secondshelf.ui.screens.IGiveScreen
@@ -18,6 +19,7 @@ import com.kotikov.secondshelf.ui.screens.ItemCandidatesScreen
 import com.kotikov.secondshelf.ui.screens.ProfileScreen
 import com.kotikov.secondshelf.ui.screens.SplashScreen
 import com.kotikov.secondshelf.ui.screens.TheyGiveScreen
+import com.kotikov.secondshelf.ui.screens.ThingDetailScreen
 
 @Composable
 fun AppNavigationGraph(
@@ -59,7 +61,8 @@ fun AppNavigationGraph(
         composable<AppScreens.Feed> {
             FeedScreen(
                 bottomBar = bottomBar,
-                feedListState = feedListState
+                feedListState = feedListState,
+                onThingClick = { id -> navController.navigate(AppScreens.ThingDetail(id)) }
             )
         }
 
@@ -91,5 +94,27 @@ fun AppNavigationGraph(
                 onBackClick = { navController.popBackStack() }
             )
         }
+
+        composable<AppScreens.ThingDetail> { navBackStackEntry ->
+            val route: AppScreens.ThingDetail = navBackStackEntry.toRoute()
+            ThingDetailScreen(
+                itemId = route.itemId,
+                onBackClick = { navController.popBackStack() },
+                onWantToTakeClick = { id -> navController.navigate(AppScreens.ApplicationForm(id)) }
+            )
+        }
+
+        composable<AppScreens.ApplicationForm> { navBackStackEntry ->
+            val route: AppScreens.ApplicationForm = navBackStackEntry.toRoute()
+            ApplicationFormScreen(
+                thingId = route.thingId,
+                onBackClick = { navController.popBackStack() },
+                onSubmitClick = { application ->
+                    println("Заявка отправлена: ${application.thingId}, текст: ${application.applicationText}")
+                    navController.popBackStack<AppScreens.Feed>(inclusive = false)
+                }
+            )
+        }
+
     }
 }
