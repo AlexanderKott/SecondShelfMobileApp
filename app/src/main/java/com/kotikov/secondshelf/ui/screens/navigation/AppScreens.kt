@@ -16,16 +16,16 @@ sealed interface AppScreens {
     data class ItemCandidates(val itemId: String) : AppScreens
 
     @Serializable
-    object Feed : AppScreens          // Лента
+    object Feed : AppScreens
 
     @Serializable
-    object IGive : AppScreens         // Я дарю
+    object IGive : AppScreens
 
     @Serializable
-    object TheyGive : AppScreens      // Мне дарят
+    object TheyGive : AppScreens
 
     @Serializable
-    object Profile : AppScreens       // Личный кабинет
+    object Profile : AppScreens
 
     @Serializable
     data class EditThing(val itemId: String) : AppScreens
