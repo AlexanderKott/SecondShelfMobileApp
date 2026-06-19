@@ -29,13 +29,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
+import com.kotikov.secondshelf.R
+import com.kotikov.secondshelf.ui.screens.components.PhotoViewer
 import com.kotikov.secondshelf.ui.screens.components.TopGradientBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,94 +50,107 @@ fun ThingDetailScreen(
     onBackClick: () -> Unit,
     onWantToTakeClick: (String) -> Unit
 ) {
-    // Mock данные вещи
+
     val mockThing = remember {
         mapOf(
             "title" to "Велосипед горный б/у",
-            "imageUrls" to listOf("https://unsplash.com", null, null, null, null),
+            "imageUrls" to listOf<Any?>(
+                R.drawable.dummy_vel,
+                "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7",
+                null,
+                null,
+                null
+            ),
             "city" to "Москва",
             "category" to "Спорт",
             "description" to "Продаю свой горный велосипед в отличном состоянии. Использовался только по выходным для прогулок в парке. Все механизмы работают исправно, тормоза новые. Отдаю, потому что переехал в другой город и не могу забрать с собой."
         )
     }
 
-    Scaffold(
-        topBar = { TopGradientBar(text = "Вещь", onBackClick = onBackClick) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // 1) Название вещи
-            Text(
-                text = mockThing["title"] as String,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+    var viewingPhotoIndex by remember { mutableStateOf<Int?>(null) }
+    val imageUrls = mockThing["imageUrls"] as List<Any?>
 
-            // 2) Фотографии (кликабельные)
-            DetailPhotosSection(
-                imageUrls = mockThing["imageUrls"] as List<String?>,
-                onPhotoClick = { index -> println("Открыть фото #$index") }
-            )
 
-            // Город
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = { TopGradientBar(text = "Вещь", onBackClick = onBackClick) }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = mockThing["city"] as String,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline
+                    text = mockThing["title"] as String,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-            }
 
-            // Категория
-            Text(
-                text = mockThing["category"] as String,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            // Описание
-            Text(
-                text = mockThing["description"] as String,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Кнопка "Хочу забрать"
-            Button(
-                onClick = { onWantToTakeClick(itemId) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                DetailPhotosSection(
+                    imageUrls = imageUrls,
+                    onPhotoClick = { index -> viewingPhotoIndex = index }
                 )
-            ) {
-                Text("Хочу забрать", style = MaterialTheme.typography.bodyLarge)
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = mockThing["city"] as String,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+
+                Text(
+                    text = mockThing["category"] as String,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+
+                Text(
+                    text = mockThing["description"] as String,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { onWantToTakeClick(itemId) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text("Хочу забрать", style = MaterialTheme.typography.bodyLarge)
+                }
             }
+        }
+
+        // Полноэкранный просмотр фото — поверх Scaffold
+        if (viewingPhotoIndex != null) {
+            PhotoViewer(
+                imageUrls = imageUrls,
+                initialIndex = viewingPhotoIndex!!,
+                onDismiss = { viewingPhotoIndex = null }
+            )
         }
     }
 }
 
 @Composable
 private fun DetailPhotosSection(
-    imageUrls: List<String?>,
+    imageUrls: List<Any?>,
     onPhotoClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
