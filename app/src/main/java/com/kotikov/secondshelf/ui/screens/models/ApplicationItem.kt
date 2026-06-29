@@ -6,5 +6,6 @@ data class ApplicationItem(
     val thingTitle: String,
     val thingImageUrl: String?,
     val status: ApplicationStatus,
-    val ownerContacts: String?
+    val ownerContacts: String?,
+    val createdAt: String
 )

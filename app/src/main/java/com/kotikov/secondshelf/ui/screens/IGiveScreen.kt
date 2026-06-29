@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kotikov.secondshelf.ui.screens.components.IGiveThingCard
 import com.kotikov.secondshelf.ui.screens.components.TopGradientBar
-import com.kotikov.secondshelf.ui.screens.models.FeedThing
+import com.kotikov.secondshelf.ui.screens.models.IGiveThing
 import com.kotikov.secondshelf.ui.screens.navigation.SharedBottomBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -44,12 +44,11 @@ fun IGiveScreen(
 
     val myGifts = remember {
         List(10) { index ->
-            FeedThing(
+            IGiveThing(
                 id = "my_gift_$index",
                 title = if (index % 2 == 0) "Велосипед горный б/у" else "Куртка зимняя очень теплая, размер L",
                 city = "Москва",
                 category = "Спорт",
-                description = "...",
                 imageUrl = if (index % 2 == 0) "https://unsplash.com" else null
             )
         }

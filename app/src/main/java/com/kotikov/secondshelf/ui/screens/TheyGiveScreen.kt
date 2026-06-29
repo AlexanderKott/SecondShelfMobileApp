@@ -79,6 +79,7 @@ fun TheyGiveScreen(
                 thingTitle = if (index % 2 == 0) "Велосипед горный б/у" else "Куртка зимняя очень теплая, размер L",
                 thingImageUrl = if (index % 2 == 0) "https://unsplash.com" else null,
                 status = status,
+                createdAt = "",
                 ownerContacts = if (status == ApplicationStatus.APPROVED) {
                     "Telegram: @owner_$index\nТелефон: +7 (999) ${100 + index}-00-00"
                 } else null
