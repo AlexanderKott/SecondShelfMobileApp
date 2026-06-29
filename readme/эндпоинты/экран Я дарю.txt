@@ -1,0 +1,229 @@
+
+Экран:
+	Я дарю
+
+		1 Получить список моих выставленных вещей (пагинация)
+		2 Создание новой вещи
+		3 Редактирование вещи
+		4 Удалить вещь из системы
+		5 Получить список заявок на вещь
+		6 Получить количество заявок на все мои вещи
+		7 Получить описание вещи по ее id
+
+	Претенденты
+		8 Получить открытую информацию из профиля конкретного человека
+		(дубль) Получить описание вещи по ее id
+		9 отказать конкретному претенденту
+		10 выбрать конкретного претендента
+
+
+1 Получить список моих выставленных вещей
+GET /api/v1/users/me/postings?page=2&limit=10
+
+Ответ: 200
+
+{
+  "data": [
+    { "id": "thing_1", "title": "Велосипед", ... },
+    { "id": "thing_2", "title": "Куртка", ... }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 2,
+      "limit": 10,
+      "total": 45,
+      "totalPages": 5,
+      "hasNext": true,
+      "hasPrevious": true
+    }
+  }
+}
+
+
+2 Создание новой вещи
+POST /api/v1/users/me/postings
+Тело такое:
+{
+  "title": "Велосипед",
+  "city": 1,
+  "category": 2,
+  "description": "Отличное состояние"
+}
+
+Ответ: 201 Created
+
+
+
+2.1 добавление фоток к постингу
+POST /api/v1/users/me/postings/{postingId}/photos
+Content-Type: multipart/form-data
+Authorization: Bearer <token>
+
+Parts:
+  - order: Int (0-4)
+  - file: binary (image/jpeg или image/png)
+
+Ответ 201 Created:
+{
+  "id": "photo_xyz789",
+  "url": "https://cdn.secondshelf.app/postings/post_abc123/photo_xyz789.jpg",
+  "order": 0
+}
+
+
+
+3 Редактировать вещь
+PATCH /api/v1/users/me/postings/ID
+
+Можно обновлять не все поля
+
+Тело :
+{
+  "title": "Велосипед",
+  "city": 1,
+  "category": 2,
+  "description": "Отличное состояние"
+}
+
+Ответ 200
+
+Поменять фотки смотри 2.1
+
+4 Удалить фотки
+DELETE /api/v1/users/me/postings/{postingId}
+Ответ: 204 No Content
+
+
+5 Получить список заявок на вещь
+GET /api/v1/users/me/postings/{postingId}/applications?page=1&limit=10
+
+Response (200 OK):
+{
+  "data": [
+    {
+      "id": "app_abc123",
+      "applicant": {
+        "id": "user_xyz789",
+        "firstName": "Александр",
+        "lastName": "Петров",
+        "photoUrl": "https://cdn.../avatar.jpg"
+      },
+      "text": "Здравствуйте! Очень нужна ваша вещь...",
+      "status": "PENDING",
+      "createdAt": "2026-06-18T14:30:00Z"
+    },
+    {
+      "id": "app_def456",
+      "applicant": {
+        "id": "user_qwe321",
+        "firstName": "Екатерина",
+        "lastName": "Смирнова",
+        "photoUrl": null
+      },
+      "text": "Добрый день! Забираю с удовольствием...",
+      "status": "APPROVED",
+      "createdAt": "2026-06-17T10:15:00Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 3,
+      "totalPages": 1,
+      "hasNext": false,
+      "hasPrevious": false
+    }
+  }
+}
+
+
+6 Получить количество заявок на все мои вещи
+GET /api/v1/users/me/applications/count
+
+Response (200 OK):
+{
+  "count": 3
+}
+
+
+7 Получить описание вещи по ее id 
+GET /api/v1/users/me/postings/{postingId}
+
+Response (200 OK):
+{
+  "id": "post_abc123",
+  "title": "Велосипед",
+  "city": 1,
+  "category": 2,
+  "description": "Отличное состояние",
+  "photos": [
+    { "id": "photo_1", "url": "https://cdn.../photo_1.jpg", "order": 0 },
+    { "id": "photo_2", "url": "https://cdn.../photo_2.jpg", "order": 1 }
+  ],
+  "createdAt": "2026-06-15T10:30:00Z",
+  "updatedAt": "2026-06-19T14:20:00Z"
+}
+
+
+8 Получить открытую информацию из профиля конкретного человека
+
+
+GET /api/v1/users/{userId}
+
+
+Ответ: 200
+{
+  "id": "user_xyz789",
+  "firstName": "Александр",
+  "lastName": "Петров",
+  "avatarUrl": "https://...",
+  "city": 1,
+  "about": "Люблю книги",
+  "createdAt": "2025-01-15T10:30:00Z",
+  "stats": {
+    "activePostingsCount": 5,
+    "givenAwayCount": 23,
+    "memberSince": "2025-01-15"
+  }
+}
+
+9 отказать претенднту
+POST /api/v1/users/me/applications/{applicationId}/reject
+
+
+10 выбрать претендента
+POST /api/v1/users/me/applications/{applicationId}/approve
+
+
+
+
+Код:
+@Transactional
+fun approveApplication(applicationId: String, currentUserId: String) {
+    // 1. Найти заявку
+    val application = applicationRepository.findById(applicationId)
+        ?: throw NotFoundException()
+    
+    // 2. Найти постинг через заявку
+    val posting = postingRepository.findById(application.postingId)
+        ?: throw NotFoundException()
+    
+    // 3. Проверить, что текущий пользователь — владелец постинга
+    if (posting.ownerId != currentUserId) {
+        throw ForbiddenException()
+    }
+    
+    // 4. Проверить, что заявка еще не обработана
+    if (application.status != ApplicationStatus.PENDING) {
+        throw ConflictException("Заявка уже обработана")
+    }
+    
+    // 5. Одобрить
+    application.status = ApplicationStatus.APPROVED
+    application.changedAt = Instant.now()
+    applicationRepository.save(application)
+}
+
+
+ 

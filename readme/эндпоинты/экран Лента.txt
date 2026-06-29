@@ -1,0 +1,76 @@
+Лента
+
+	1 Поиск (опциями: город и категории)
+	2 Запрос таблицы городов
+	3 Запрос таблицы категорий
+	4 Список вещей (название, город, категория, картинка, описание, id)
+
+
+	1 Поиск
+		GET /api/v1/postings?page=1&limit=20&city=1&category=2&q=пальто
+{
+  "data": [
+      {
+      "id": "post_def456",
+      "title": "Книги по программированию",
+      "city": 2,
+      "category": 5,
+      "imageUrl": null,
+      "description": "Отдаю комплект из 5 книг. Самовывоз из центра.",
+      "createdAt": "2026-06-27T10:15:00Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 145,
+      "totalPages": 8,
+      "hasNext": true,
+      "hasPrevious": false
+    }
+  }
+}
+
+
+2 Запрос таблицы городов
+GET /api/v1/cities
+200
+
+
+{
+  "data": [
+    { "id": 1, "name": "Москва" },
+    { "id": 2, "name": "Санкт-Петербург" },
+    { "id": 3, "name": "Новосибирск" },
+    { "id": 4, "name": "Екатеринбург" }
+  ]
+}
+
+
+data class City(
+    val id: Int,
+    val name: String
+)
+
+
+
+
+3 GET /api/v1/categories
+200
+
+{
+  "data": [
+    { "id": 1, "name": "Одежда" },
+    { "id": 2, "name": "Обувь" },
+    { "id": 3, "name": "Электроника" },
+    { "id": 4, "name": "Книги" },
+    { "id": 5, "name": "Спорт" },
+    { "id": 6, "name": "Другое" }
+  ]
+}
+
+data class Category(
+    val id: Int,
+    val name: String
+)

@@ -1,0 +1,59 @@
+Мне дарят
+	1 Получить список вещей
+	2 Отказаться от заявки
+	3 Беджик
+
+
+
+
+GET /api/v1/users/me/applications?page=2&limit=10
+
+Ответ: 200
+
+{
+  "data": [
+    { "id": "thing_1", "title": "Велосипед", ... },
+    { "id": "thing_2", "title": "Куртка", ... }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 2,
+      "limit": 10,
+      "total": 45,
+      "totalPages": 5,
+      "hasNext": true,
+      "hasPrevious": true
+    }
+  }
+}
+
+
+
+
+Дата:
+
+  {
+      "id": "app_abc123",
+      "thing": {
+        "id": "post_xyz789",
+        "title": "Велосипед горный б/у",
+        "imageUrl": "https://cdn.secondshelf.app/post_xyz789/photo_1.jpg"
+      },
+      "status": "PENDING",
+      "ownerContacts": null,
+      "createdAt": "2026-06-28T14:30:00Z"
+    }
+
+
+2 отказаться отзаявки
+POST /api/v1/users/me/applications/{applicationId}/reject
+
+
+
+3 Получить количество заявок на все мои вещи
+GET /api/v1/users/me/applications/count
+
+Response (200 OK):
+{
+  "count": 3
+}

@@ -1,0 +1,43 @@
+Экран Профиль
+
+1 Получить мои данные
+
+
+GET /api/v1/users/me
+
+200
+{
+  "id": "user_abc123",
+  "firstName": "Иван",
+  "lastName": "Иванов",
+  "city": 1,
+  "about": "Люблю книги и активный отдых",
+  "contacts": "Telegram: @ivan_dev\nТелефон: +7 (999) 123-45-67",
+  "createdAt": "2025-01-15T10:30:00Z"
+}
+
+
+
+2 PATCH /api/v1/users/me
+
+200
+{
+  "firstName": "Петр",
+  "city": 2
+}
+
+Ответ:
+{
+  "id": "user_abc123",
+  "firstName": "Петр",
+  "lastName": "Иванов",
+  "city": 2,
+  "about": "Люблю книги и активный отдых",
+  "contacts": "Telegram: @ivan_dev\nТелефон: +7 (999) 123-45-67",
+  "createdAt": "2025-01-15T10:30:00Z"
+}
+
+
+
+3 Удалить аккаунт
+DELETE /api/v1/users/me
